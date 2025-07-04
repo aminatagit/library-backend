@@ -1,35 +1,30 @@
+// server.js
 const express = require('express');
 const dotenv = require('dotenv');
-const authRoutes = require('./routes/authRoutes');
-const bookRoutes = require('./routes/bookRoutes');
+const cors = require('cors');
 const ratingRoutes = require('./routes/ratingRoutes');
-const loanRoutes = require('./routes/loanRoutes');
-const loanController = require('./controllers/loanController');
-const cron = require('node-cron');
+const userRoutes = require('./routes/userRoutes');
+const bookRoutes = require('./routes/bookRoutes');
+const borrowRoutes = require('./routes/borrowRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 dotenv.config();
-
 const app = express();
-
-// Middleware
+app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/books', bookRoutes);
 app.use('/api/ratings', ratingRoutes);
-app.use('/api/loans', loanRoutes);
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Server error' });
-});
-
-// Schedule overdue notifications daily at midnight
-cron.schedule('0 0 * * *', loanController.sendOverdueNotifications);
+app.use('/api/users', userRoutes);
+app.use('/api/books', bookRoutes);
+app.use('/api/borrows', borrowRoutes);
+app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Planification de la notification des retards
+const cron = require('node-cron');
+const notifyLateReturns = require('./cron/lateReturns');
+// Toutes les 2 minutes
+cron.schedule('*/2 * * * *', notifyLateReturns);

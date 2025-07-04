@@ -1,4 +1,5 @@
-CREATE DATABASE library_db;
+-- Active: 1746970840720@@127.0.0.1@3306
+CREATE DATABASE IF NOT EXISTS library_db;
 USE library_db;
 
 -- Users table
@@ -46,3 +47,27 @@ CREATE TABLE ratings (
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (book_id) REFERENCES books(id)
 );
+
+-- Insert specific books
+INSERT INTO books (title, author, genre, published_year) VALUES
+('L\'Enfant noir', 'Camara Laye', 'African Literature', 1953),
+('Une si longue lettre', 'Mariama Bâ', 'African Literature', 1979),
+('Allah n’est pas obligé', 'Ahmadou Kourouma', 'African Literature', 2000),
+('Le Monde s’effondre', 'Chinua Achebe', 'African Literature', 1958),
+('Sarraounia', 'Abdoulaye Mamani', 'African Historical Fiction', 1980),
+('Peau noire, masques blancs', 'Frantz Fanon', 'African Philosophy', 1952),
+('L’Aventure ambiguë', 'Cheikh Hamidou Kane', 'African Philosophy/Fiction', 1961),
+('Éthiopiques', 'Léopold Sédar Senghor', 'African Philosophy/Poetry', 1956),
+('Amkoullel, l’enfant peul', 'Amadou Hampâté Bâ', 'African Autobiography', 1991),
+('Les Bouts de bois de Dieu', 'Ousmane Sembène', 'African Literature', 1960),
+('Le Feu des origines', 'Emmanuel Dongala', 'African Fiction', 1987),
+('Les Impatientes', 'Djaili Amadou Amal', 'African Literature', 2020),
+('Notre-Dame du Nil', 'Scholastique Mukasonga', 'African Fiction', 2012),
+('Introduction aux mathématiques modernes', 'Nicolas Bourbaki', 'Mathematics', 1939),
+('Algèbre linéaire et ses applications', 'Gilbert Strang', 'Mathematics', 1976),
+('L’Histoire des sciences', 'Stephen Hawking', 'Science', 2005),
+('Éléments', 'Euclide', 'Mathematics', -300),
+('Brève histoire du temps', 'Stephen Hawking', 'Science', 1988);
+
+DELETE FROM library_db.books
+WHERE title LIKE 'African Novel %' AND author LIKE 'African Author %';
