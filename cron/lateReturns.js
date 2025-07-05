@@ -8,7 +8,9 @@ async function notifyLateReturns() {
     FROM borrows b
     JOIN users u ON b.user_id = u.id
     JOIN books ON b.book_id = books.id
-    WHERE b.return_by < CURDATE() AND (b.return_date IS NULL OR b.return_date > b.return_by)
+    WHERE b.return_by < NOW()
+      AND (b.return_date IS NULL OR b.return_date > b.return_by)
+      AND (b.late_email_sent IS NULL OR b.late_email_sent = FALSE)
   `);
 
   for (const borrow of rows) {
@@ -16,17 +18,17 @@ async function notifyLateReturns() {
       // Affiche la date/heure exacte de retour attendue
       let returnByStr = 'inconnue';
       if (borrow.returnBy instanceof Date) {
-        // Si c'est un objet Date
         returnByStr = borrow.returnBy.toLocaleString('fr-FR', { hour12: false });
       } else if (typeof borrow.returnBy === 'string') {
-        // Si c'est une chaîne (MySQL renvoie souvent une string)
-        returnByStr = borrow.returnBy.replace('T', ' ').slice(0, 16); // yyyy-mm-dd HH:MM
+        returnByStr = borrow.returnBy.replace('T', ' ').slice(0, 16);
       }
       await sendLateReturnEmail(
         borrow.email,
         borrow.title,
         returnByStr
       );
+      // Marque l'emprunt comme notifié pour ne pas renvoyer plusieurs fois
+      await pool.query('UPDATE borrows SET late_email_sent = TRUE WHERE id = ?', [borrow.id]);
     }
   }
 }

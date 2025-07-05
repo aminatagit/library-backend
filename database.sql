@@ -71,3 +71,7 @@ INSERT INTO books (title, author, genre, published_year) VALUES
 
 DELETE FROM library_db.books
 WHERE title LIKE 'African Novel %' AND author LIKE 'African Author %';
+
+
+
+ALTER TABLE borrows ADD COLUMN late_email_sent BOOLEAN DEFAULT FALSE;

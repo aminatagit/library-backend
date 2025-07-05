@@ -20,7 +20,6 @@ const authController = {
       const hashedPassword = await bcrypt.hash(password, salt);
 
       // Create user
-
       let user;
       try {
         user = await userModel.create({ username, email, password: hashedPassword, role, receive_late_email });
@@ -37,6 +36,19 @@ const authController = {
       const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, {
         expiresIn: '1h',
       });
+
+      // Envoi d'un mail de bienvenue/confirmation d'inscription
+      try {
+        const { sendLateReturnEmail } = require('../utils/mailer');
+        await sendLateReturnEmail(
+          user.email,
+          'Bienvenue à la bibliothèque',
+          new Date().toLocaleString('fr-FR', { hour12: false })
+        );
+        console.log(`[MAILER] Mail de bienvenue envoyé à ${user.email}`);
+      } catch (mailErr) {
+        console.error(`[MAILER] Erreur lors de l'envoi du mail de bienvenue à ${user.email}:`, mailErr);
+      }
 
       console.log('User registered successfully:', { id: user.id, email: user.email, role: user.role, receive_late_email: user.receive_late_email });
       res.status(201).json({ message: 'User registered successfully', token, role: user.role, receive_late_email: user.receive_late_email });

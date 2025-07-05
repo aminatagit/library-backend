@@ -7,6 +7,7 @@ const userRoutes = require('./routes/userRoutes');
 const bookRoutes = require('./routes/bookRoutes');
 const borrowRoutes = require('./routes/borrowRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const testMailRoutes = require('./routes/testMailRoutes');
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/borrows', borrowRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/test-mail', testMailRoutes);
 
 const PORT = process.env.PORT || 3000;
 
